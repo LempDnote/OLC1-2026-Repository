@@ -1,0 +1,61 @@
+# .gitignore para proyectos Java
+
+# Archivos compilados
+*.class
+*.jar
+*.war
+*.ear
+
+# Directorios de build
+/target/
+/build/
+/out/
+/bin/
+/dist/
+/classes/
+
+# Herramientas de construcción
+/.gradle/
+/.gradle/
+/mvnw?
+/mvnw.cmd
+/.mvn/wrapper/maven-wrapper.jar
+
+# IDEs
+# IntelliJ
+/.idea/
+*.iml
+*.iws
+
+# Eclipse
+/.metadata
+/.classpath
+/.project
+/.settings/
+/.recommenders
+
+# NetBeans
+/nbproject/private/
+/nbbuild/
+/nbdist/
+/.antlr/
+
+# Archivos de log y reports
+*.log
+hs_err_pid*
+coverage/
+jacoco.exec
+
+# Dependencias y libs local
+/lib/
+/vendor/
+
+# Sistema y archivos temporales
+.DS_Store
+Thumbs.db
+desktop.ini
+*.swp
+*~ 
+
+# Otros
+!.gitignore

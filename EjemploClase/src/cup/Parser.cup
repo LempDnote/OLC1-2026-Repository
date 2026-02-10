@@ -1,0 +1,42 @@
+package analisis;
+
+import java_cup.runtime.Symbol;
+
+
+terminal ABSTRACT, BOOLEAN, BREAK;
+terminal EQ, PLUS;
+terminal IDENTIFIER, INTEGER_LITERAL, STRING_LITERAL;
+non terminal String program, stmt_list, stmt, expr;
+precedence left PLUS;
+
+start with program;
+
+program
+  ::= stmt_list:a
+      {: System.out.println(a); RESULT = a; :}
+  ;
+
+stmt_list
+  ::= stmt_list:a stmt:b
+      {: RESULT = a + " " + b; :}
+  |   stmt:a
+      {: RESULT = a; :}
+  ;
+
+stmt
+  ::= ABSTRACT stmt:b
+      {: RESULT = "abstract " + b; :}
+  |  IDENTIFIER EQ expr:c
+      {: RESULT = "assign"; :}
+  |  BREAK
+      {: RESULT = "break"; :}
+  ;
+
+expr
+  ::=  INTEGER_LITERAL
+      {: RESULT = "int"; :}
+  |  STRING_LITERAL
+      {: RESULT = "string"; :}
+  |  IDENTIFIER
+      {: RESULT = "id"; :}
+  ;
