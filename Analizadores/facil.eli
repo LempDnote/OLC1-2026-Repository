@@ -1,0 +1,56 @@
+
+database tienda {
+  store at "tienda.json";
+}
+
+use tienda;
+
+table clientes {
+  id : int;
+  nombre : string;
+  edad : int;
+  activo : bool;
+}
+
+## Inserciones
+add clientes {
+  id: 1,
+  nombre: "Miguel",
+  edad: 14,
+  activo: true
+};
+
+add clientes {
+  id: 2,
+  nombre: "Ana",
+  edad: 19,
+  activo: true
+};
+
+add clientes {
+  id: 3,
+  nombre: "Carlos",
+  edad: 17,
+  activo: false
+};
+
+## Consulta simple (filtro relacional)
+read clientes {
+  fields: nombre, edad, activo;
+  filter: edad >= 18;
+};
+
+## Update simple
+update clientes {
+  set: activo = true;
+  filter: id == 3;
+};
+
+read clientes {
+  fields: *;
+  filter: activo == true;
+};
+
+export "clientes_activos.json";
+
+clear clientes;

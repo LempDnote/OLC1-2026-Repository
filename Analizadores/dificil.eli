@@ -1,0 +1,150 @@
+
+database ecommerce {
+  store at "ecommerce.json";
+}
+
+use ecommerce;
+
+table clientes {
+  id : int;
+  nombre : string;
+  edad : int;
+  activo : bool;
+  preferencias : array;
+  meta : object;
+}
+
+table productos {
+  id : int;
+  nombre : string;
+  precio : float;
+  stock : int;
+  tags : array;
+  specs : object;
+}
+
+table ordenes {
+  id : int;
+  cliente_id : int;
+  total : float;
+  estado : string;
+  items : array;
+  envio : object;
+}
+
+add clientes { id: 1, nombre: "Miguel", edad: 14, activo: true,
+  preferencias: ["gaming","anime","tecnologia"],
+  meta: { nombre: "Miguel", edad: 14, ciudad: "Guatemala", vip: false }
+};
+
+add clientes { id: 2, nombre: "Ana", edad: 19, activo: true,
+  preferencias: ["lectura","fitness"],
+  meta: { nombre: "Ana", edad: 19, ciudad: "Mixco", vip: true }
+};
+
+add clientes { id: 3, nombre: "Luis", edad: 22, activo: true,
+  preferencias: ["devops","cloud","docker"],
+  meta: { nombre: "Luis", edad: 22, ciudad: "Villa Nueva", vip: false }
+};
+
+add clientes { id: 4, nombre: "Carla", edad: 28, activo: false,
+  preferencias: ["cocina","viajes","fotografia"],
+  meta: { nombre: "Carla", edad: 28, ciudad: "Antigua", vip: false }
+};
+
+add clientes { id: 5, nombre: "Diego", edad: 31, activo: true,
+  preferencias: ["finanzas","bolsa","data"],
+  meta: { nombre: "Diego", edad: 31, ciudad: "Quetzaltenango", vip: true }
+};
+
+add productos { 
+  id: 10, nombre: "Laptop", precio: 6500.50, stock: 8,
+  tags: ["tecnologia","trabajo"],
+  specs: { marca: "Lenovo", ram_gb: 16, ssd_gb: 512 }
+};
+
+add productos { id: 11, nombre: "Mouse", precio: 120.75, stock: 50,
+  tags: ["tecnologia","accesorios"],
+  specs: { marca: "Logitech", dpi: 8000, inalambrico: true }
+};
+
+add productos { id: 12, nombre: "Audifonos", precio: 350.00, stock: 25,
+  tags: ["audio","tecnologia"],
+  specs: { marca: "Sony", cancelacion_ruido: true, microfono: true }
+};
+
+add productos { id: 13, nombre: "Silla Gamer", precio: 999.99, stock: 10,
+  tags: ["gaming","hogar"],
+  specs: { material: "cuero_sintetico", reclinable: true, color: "negro" }
+};
+
+add productos { id: 14, nombre: "Libro Compiladores", precio: 250.00, stock: 40,
+  tags: ["lectura","universidad"],
+  specs: { idioma: "es", edicion: 2, autor: "X" }
+};
+
+add ordenes {
+  id: 100,
+  cliente_id: 2,
+  total: 6871.25,
+  estado: "PAGADO",
+  items: [
+    { producto_id: 10, cantidad: 1, subtotal: 6500.50 },
+    { producto_id: 11, cantidad: 3, subtotal: 362.25 },
+    { producto_id: 14, cantidad: 1, subtotal: 250.00 }
+  ],
+  envio: { direccion: "Zona 11", metodo: "mensajeria", urgente: false }
+};
+
+add ordenes {
+  id: 101,
+  cliente_id: 3,
+  total: 350.00,
+  estado: "PENDIENTE",
+  items: [ { producto_id: 12, cantidad: 1, subtotal: 350.00 } ],
+  envio: { direccion: "Zona 4", metodo: "pickup", urgente: false }
+};
+
+add ordenes {
+  id: 102,
+  cliente_id: 5,
+  total: 1119.99,
+  estado: "PAGADO",
+  items: [
+    { producto_id: 13, cantidad: 1, subtotal: 999.99 },
+    { producto_id: 11, cantidad: 1, subtotal: 120.00 }
+  ],
+  envio: { direccion: "Xela Centro", metodo: "mensajeria", urgente: true }
+};
+
+add ordenes {
+  id: 103,
+  cliente_id: 4,
+  total: 120.75,
+  estado: "CANCELADO",
+  items: [ { producto_id: 11, cantidad: 1, subtotal: 120.75 } ],
+  envio: { direccion: "Antigua", metodo: "mensajeria", urgente: false }
+};
+
+read ordenes {
+  fields: id, cliente_id, total, estado;
+  filter: (total > 1000.0 && estado == "PAGADO") ||
+          (cliente_id == 3 && !(estado == "CANCELADO"));
+};
+
+read clientes {
+  fields: id, nombre, edad, activo;
+  filter: (activo == true && edad >= 18) || !(meta == null);
+};
+
+read productos {
+  fields: nombre, precio, stock;
+  filter: (stock <= 10 && precio > 900.0) || precio >= 6000.0;
+};
+
+export "reporte_consultas.json";
+
+read clientes {
+  fields: *;
+  filter: id >= 1;
+};

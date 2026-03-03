@@ -8,27 +8,65 @@ package analisis;
 /** CUP generated interface containing symbol constants. */
 public interface sym {
   /* terminals */
-  public static final int ABSTRACT = 2;
-  public static final int BOOLEAN = 3;
-  public static final int STRING_LITERAL = 9;
-  public static final int PLUS = 6;
-  public static final int EQ = 5;
-  public static final int EOF = 0;
-  public static final int error = 1;
+  public static final int BOOLEANLITERAL = 28;
+  public static final int READ = 15;
+  public static final int INT = 19;
+  public static final int ALL = 13;
   public static final int IDENTIFIER = 7;
-  public static final int INTEGER_LITERAL = 8;
-  public static final int BREAK = 4;
+  public static final int AT = 6;
+  public static final int TABLE = 4;
+  public static final int FLOATLITERAL = 27;
+  public static final int OBJECT = 24;
+  public static final int STRING_LITERAL = 18;
+  public static final int STRING = 22;
+  public static final int FILTER = 17;
+  public static final int COMA = 12;
+  public static final int FLOAT = 20;
+  public static final int EOF = 0;
+  public static final int ENTEROLITERAL = 26;
+  public static final int DATABASE = 2;
+  public static final int ADD = 14;
+  public static final int FIELDS = 16;
+  public static final int error = 1;
+  public static final int BOOL = 21;
+  public static final int USE = 3;
+  public static final int PCOMA = 11;
+  public static final int STORE = 5;
+  public static final int NULL = 23;
+  public static final int LLOPEN = 8;
+  public static final int ARRAY = 25;
+  public static final int LLCLOSE = 9;
+  public static final int DPUNTOS = 10;
   public static final String[] terminalNames = new String[] {
   "EOF",
   "error",
-  "ABSTRACT",
-  "BOOLEAN",
-  "BREAK",
-  "EQ",
-  "PLUS",
+  "DATABASE",
+  "USE",
+  "TABLE",
+  "STORE",
+  "AT",
   "IDENTIFIER",
-  "INTEGER_LITERAL",
-  "STRING_LITERAL"
+  "LLOPEN",
+  "LLCLOSE",
+  "DPUNTOS",
+  "PCOMA",
+  "COMA",
+  "ALL",
+  "ADD",
+  "READ",
+  "FIELDS",
+  "FILTER",
+  "STRING_LITERAL",
+  "INT",
+  "FLOAT",
+  "BOOL",
+  "STRING",
+  "NULL",
+  "OBJECT",
+  "ARRAY",
+  "ENTEROLITERAL",
+  "FLOATLITERAL",
+  "BOOLEANLITERAL"
   };
 }
 

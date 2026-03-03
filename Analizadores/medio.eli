@@ -1,0 +1,72 @@
+## prueba intermedia
+database colegio {
+  store at "colegio.json";
+}
+
+use colegio;
+
+table estudiantes {
+  id : int;
+  nombre : string;
+  edad : int;
+  activo : bool;
+  cursos : array;
+  perfil : object;
+}
+
+add estudiantes {
+  id: 1,
+  nombre: "Miguel",
+  edad: 14,
+  activo: true,
+  cursos: ["Compiladores", "Bases de Datos", "IA"],
+  perfil: { nombre: "Miguel", edad: 14, grado: "Tercero", becado: false }
+};
+
+add estudiantes {
+  id: 2,
+  nombre: "Ana",
+  edad: 19,
+  activo: true,
+  cursos: ["Redes", "SO1"],
+  perfil: { nombre: "Ana", edad: 19, grado: "Universidad", becado: true }
+};
+
+add estudiantes {
+  id: 3,
+  nombre: "Luis",
+  edad: 22,
+  activo: false,
+  cursos: ["ETL", "DW", "OLAP"],
+  perfil: { nombre: "Luis", edad: 22, grado: "Universidad", becado: false }
+};
+
+read estudiantes {
+  fields: nombre, edad, activo;
+  filter: (edad >= 18 && edad <= 25) || !(activo == false);
+};
+
+update estudiantes {
+  set: activo = true, nombre = "Luis Pérez";
+  filter: id == 3 && edad >= 21;
+};
+
+$$
+
+read estudiantes {
+  fields: nombre;
+  filter: edad > 18 &&$ edad < 30;
+};
+
+read estudiantes {
+  fields: nombre;
+  filter: nombre == '"Ana";
+};
+
+
+read estudiantes {
+  fields: *;
+  filter: activo == true && edad >= 18;
+};
+
+export "estudiantes_activos.json";

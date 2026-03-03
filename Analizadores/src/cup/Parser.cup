@@ -1,42 +1,157 @@
 package analisis;
 
 import java_cup.runtime.Symbol;
+import java_cup.runtime.SymbolFactory;
+import java.util.HashMap;
+import java.util.Map;
+import core.table;
+import core.database;
+import java.util.List;
+import java.util.ArrayList;
+import dbutils.utils;
 
+/*Parte de java que ustedes quieren utilizar*/
+parser code{:
+    /*Tabla de simbolos temporal*/
+    private Map<String,String> SymbolTab = new HashMap<>();
+    private List<database> databases;
+    /*Esto es una variable global que me va a permitir identificar la base activa*/
+    private database activeDB;
+    private utils herramientas = new utils();
 
-terminal ABSTRACT, BOOLEAN, BREAK;
-terminal EQ, PLUS;
-terminal IDENTIFIER, INTEGER_LITERAL, STRING_LITERAL;
-non terminal String program, stmt_list, stmt, expr;
-precedence left PLUS;
+    /*Metodo de acceso Getter y Setter*/
+    public List<database> getDatabases(){
+        return this.databases;
+    }
+
+    public Parser(Lexer lex, List<database> database) {
+        super(lex);
+        databases = database;
+    }
+
+    public void setDatabases(List<database> databaseMem){
+        databases = databaseMem;
+        for (database database : databases) {
+            System.out.println(database.toString());
+        }
+    }
+
+    public database getActiveDB(){
+        return activeDB;
+    }
+
+    public void setActiveDB(database active){
+        this.activeDB = active;
+    }
+
+:};
+
+/********** DEFINICION DE TERMINALES **********/
+terminal DATABASE, USE, TABLE, STORE, AT;
+terminal IDENTIFIER, LLOPEN, LLCLOSE;
+terminal DPUNTOS, PCOMA, COMA, ALL;
+terminal ADD;
+terminal READ, FIELDS, FILTER;
+terminal STRING_LITERAL;
+terminal INT, FLOAT, BOOL, STRING, NULL, OBJECT, ARRAY;
+terminal Integer ENTEROLITERAL;
+terminal Float FLOATLITERAL;
+terminal Boolean BOOLEANLITERAL;
+
+non terminal program;
+non terminal Map<String,Object> bodyTable;
+non terminal instrucciones, instruccion;
+non terminal String bodyDB;
+non terminal database instruccion_base;
+non terminal table instruccion_tabla;
+non terminal String instruccion_use;
+non terminal Class<?> gramaticaTipos;
+non terminal gramaticaLiterales;
+non terminal instruccion_add;
+non terminal Map<String,Object> bodyADD;
 
 start with program;
 
-program
-  ::= stmt_list:a
-      {: System.out.println(a); RESULT = a; :}
-  ;
+program ::= 
+        instrucciones {:/*Empty*/:};
 
-stmt_list
-  ::= stmt_list:a stmt:b
-      {: RESULT = a + " " + b; :}
-  |   stmt:a
-      {: RESULT = a; :}
-  ;
+instrucciones ::=  
+                instrucciones instruccion {:/*No se genera ninguna instruccion adicional*/:}
+                | instruccion {:/*No se sube ninguna instrucciones*/:};
 
-stmt
-  ::= ABSTRACT stmt:b
-      {: RESULT = "abstract " + b; :}
-  |  IDENTIFIER EQ expr:c
-      {: RESULT = "assign"; :}
-  |  BREAK
-      {: RESULT = "break"; :}
-  ;
+instruccion ::= 
+                instruccion_base:database {:databases.add(database);:}
+                | instruccion_tabla:tabla {:activeDB.addTable(tabla);:}
+                | instruccion_use:nameDB {: activeDB = herramientas.findDatabase(databases, nameDB);:}
+                | instruccion_add:add   {:/**/:};
 
-expr
-  ::=  INTEGER_LITERAL
-      {: RESULT = "int"; :}
-  |  STRING_LITERAL
-      {: RESULT = "string"; :}
-  |  IDENTIFIER
-      {: RESULT = "id"; :}
-  ;
+instruccion_base ::= 
+                DATABASE IDENTIFIER:name LLOPEN bodyDB:location {:RESULT = new database(name.toString(), location);:};
+
+bodyDB ::= 
+                STORE AT STRING_LITERAL:path PCOMA LLCLOSE {:RESULT = path.toString();:}
+        |       LLCLOSE{:RESULT = "/Users/luismonroy/NetBeansProjects/Analizadores/cache";:};
+ 
+instruccion_use ::= 
+                USE IDENTIFIER:dbName PCOMA {:RESULT = dbName.toString();:};
+
+instruccion_tabla ::= 
+                TABLE IDENTIFIER:nombreTabla LLOPEN bodyTable:types LLCLOSE PCOMA
+                {:RESULT = new table(nombreTabla.toString(), types);:};
+
+/*Instruccion bodyTB*/
+bodyTable ::=
+      IDENTIFIER:nombreColumna DPUNTOS gramaticaTipos:tipo PCOMA
+      {:
+        Map<String,Object> m = new HashMap<>();
+        m.put(nombreColumna.toString(), tipo);
+        RESULT = m;
+      :}
+    | IDENTIFIER:nombreColumna DPUNTOS gramaticaTipos:tipo PCOMA bodyTable:rest
+      {:
+        Map<String,Object> m = new HashMap<>();
+        m.put(nombreColumna.toString(), tipo);
+        m.putAll((Map<String,Object>)rest);
+        RESULT = m;
+      :}
+    ;
+
+/*No le pongan atencion*/
+instruccion_add ::=
+                ADD IDENTIFIER:nombreTabla LLOPEN bodyADD:values LLCLOSE PCOMA
+                {:
+                    RESULT = activeDB.addValues(nombreTabla.toString(),values);
+                :};
+
+/*No le pongan atencion*/
+bodyADD ::= 
+      IDENTIFIER:nombreColumna DPUNTOS gramaticaLiterales:valor COMA 
+      {:
+        Map<String,Object> m = new HashMap<>();
+        m.put(nombreColumna.toString(), valor);
+        RESULT = m;
+      :}
+      | IDENTIFIER:nombreColumna DPUNTOS gramaticaLiterales:valor COMA bodyADD:rest
+      {:
+        Map<String,Object> m = new HashMap<>();
+        m.put(nombreColumna.toString(), valor);
+        m.putAll((Map<String,Object>)rest);
+        RESULT = m;
+      :};
+
+
+
+/*No le pongan atencion*/
+gramaticaLiterales ::=      ENTEROLITERAL:entero          {:RESULT = entero;:}
+                |           FLOATLITERAL:decimal         {:RESULT = decimal;:}
+                |           BOOLEANLITERAL:boleano       {:RESULT = boleano;:};
+
+
+gramaticaTipos ::=
+                INT                 {:RESULT = Integer.class;:}
+                | BOOL              {:RESULT = Boolean.class;:}
+                | STRING            {:RESULT = String.class;:}
+                | FLOAT             {:RESULT = Float.class;:}
+                | NULL              {:RESULT = Void.class;:}
+                | OBJECT:tipo       {:RESULT = Object.class;:}
+                | ARRAY:tipo        {:RESULT = Object.class;:};
